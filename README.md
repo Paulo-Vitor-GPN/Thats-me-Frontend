@@ -1,7 +1,37 @@
-
 <build>
-    <plugins>
-        <plugin>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.cxf</groupId>
+				<artifactId>cxf-codegen-plugin</artifactId>
+				<version>3.3.5</version>
+				<executions>
+					<execution>
+						<id>generate-sources</id>
+						<phase>generate-sources</phase>
+						<configuration>
+							<sourceRoot>${project.build.directory}/generated-sources/cxf
+							</sourceRoot>
+							<wsdlOptions>
+								<wsdlOption>
+									<wsdl>${basedir}/src/main/resources/wsdl/PreApprovedOfferSantanderFinancingBSV1.wsdl
+									</wsdl>
+									<autoNameResolution>true</autoNameResolution>
+									<extendedSoapHeaders>true</extendedSoapHeaders>
+									<bindingFiles>
+										<bindingFile>${basedir}/src/main/resources/binding.xml
+										</bindingFile>
+									</bindingFiles>
+								</wsdlOption>
+							</wsdlOptions>
+						</configuration>
+						<goals>
+							<goal>wsdl2java</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-maven-plugin</artifactId>
             <version>2.4.2</version>
