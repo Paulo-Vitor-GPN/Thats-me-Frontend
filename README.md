@@ -1,37 +1,21 @@
-package br.com.santander.afccaml.clientintegration.util;
+package br.com.santander.vjcaml.clientintegration;
 
-import static org.mockito.Mockito.when;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.MockitoAnnotations;
-import org.springframework.context.annotation.Bean;
+import br.com.santander.bhs.component.altair.annotation.EnableCamelIntegrationAltair;
+import br.com.santander.bhs.integration.annotation.EnableIntegrationCore;
 
-import br.com.santander.dlb.pemsignature.PEMSignature;
+@EnableCamelIntegrationAltair
+@EnableIntegrationCore
+@SpringBootApplication(scanBasePackages = { 
+    "br.com.santander.vjcaml.clientintegration", 
+    "br.com.santander.tecnico.dlbcripto", 
+    "br.com.santander.component" 
+})
+public class IntegrationApplication {
 
-public class CreateReqGetSigntureTest {
-	@Before
-	public void init() {
-		MockitoAnnotations.initMocks(this);
+	public static void main(String[] args) {
+		SpringApplication.run(IntegrationApplication.class, args);
 	}
-	
-	 @Bean 
-	 public String environmentVariable() { 
-		 
-		 return environmentVariable();  
-	 }
-	@Test
-	public void createReqGetSigntureTest() {
-		String pathToPem = "";
-		String systemAcronym = "EM";
-		when(PEMSignature.readPemFile(pathToPem)).thenReturn(PEMSignature.readPemFile(""));
-		try {
-			String str = CommonUtils.createReqGetSignture(pathToPem, systemAcronym);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-	}
-
 }
