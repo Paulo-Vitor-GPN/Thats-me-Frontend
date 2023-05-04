@@ -1,47 +1,7 @@
-<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.cxf</groupId>
-				<artifactId>cxf-codegen-plugin</artifactId>
-				<version>3.3.5</version>
-				<executions>
-					<execution>
-						<id>generate-sources</id>
-						<phase>generate-sources</phase>
-						<configuration>
-							<sourceRoot>${project.build.directory}/generated-sources/cxf
-							</sourceRoot>
-							<wsdlOptions>
-								<wsdlOption>
-									<wsdl>${basedir}/src/main/resources/wsdl/PreApprovedOfferSantanderFinancingBSV1.wsdl
-									</wsdl>
-									<autoNameResolution>true</autoNameResolution>
-									<extendedSoapHeaders>true</extendedSoapHeaders>
-									<bindingFiles>
-										<bindingFile>${basedir}/src/main/resources/binding.xml
-										</bindingFile>
-									</bindingFiles>
-								</wsdlOption>
-							</wsdlOptions>
-						</configuration>
-						<goals>
-							<goal>wsdl2java</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-
-			<plugin>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-maven-plugin</artifactId>
-            <version>2.4.2</version>
-            <executions>
-                <execution>
-                    <goals>
-                        <goal>run</goal>
-                    </goals>
-                </execution>
-            </executions>
-        </plugin>
-    </plugins>
-</build>
+{"timestamp":"2023-05-04T00:41:18.792+0000","level":"INFO","thread":"background-preinit","mdc":{},"logger":"org.hibernate.validator.internal.util.Version","message":"HV000001: Hibernate Validator 6.1.7.Final","context":"arsenal-lib-log"}
+{"timestamp":"2023-05-04T00:41:18.859+0000","level":"INFO","thread":"main","mdc":{},"logger":"br.com.santander.vjcaml.clientintegration.IntegrationApplication","message":"Starting IntegrationApplication using Java 11.0.5 on N2388502 with PID 24692 (C:\\Users\\t769118\\Documents\\git\\VJ\\MIGRA├ç├âO IIB TO CAMEL\\camel-iib-pre-approved-offer-v1\\target\\classes started by T769118 in C:\\Users\\t769118\\Documents\\git\\VJ\\MIGRA├ç├âO IIB TO CAMEL\\camel-iib-pre-approved-offer-v1)","context":"arsenal-lib-log"}
+{"timestamp":"2023-05-04T00:41:18.860+0000","level":"INFO","thread":"main","mdc":{},"logger":"br.com.santander.vjcaml.clientintegration.IntegrationApplication","message":"The following profiles are active: dev","context":"arsenal-lib-log"}
+{"timestamp":"2023-05-04T00:41:19.275+0000","level":"INFO","thread":"main","mdc":{},"logger":"org.springframework.context.annotation.ConfigurationClassParser","message":"Properties location [file:${ALTAIR_MQ_PATH:/app/altair.yml}] not resolvable: \\app\\altair.yml (O sistema n├úo pode encontrar o caminho especificado)","context":"arsenal-lib-log"}
+{"timestamp":"2023-05-04T00:41:19.336+0000","level":"WARN","thread":"main","mdc":{},"logger":"org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext","message":"Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanDefinitionStoreException: Failed to process import candidates for configuration class [br.com.santander.vjcaml.clientintegration.IntegrationApplication]; nested exception is java.lang.IllegalStateException: Error processing condition on br.com.santander.bhs.component.altair.config.IntegrationServerAltairServiceConfig","context":"arsenal-lib-log"}
+{"timestamp":"2023-05-04T00:41:19.546+0000","level":"ERROR","thread":"main","mdc":{},"logger":"org.springframework.boot.SpringApplication","message":"Application run failed","context":"arsenal-lib-log","exception":"java.lang.IllegalArgumentException: Could not resolve placeholder 'MQ_HOST' in value \"${MQ_HOST}\"\r\n\tat org.springframework.util.PropertyPlaceholderHelper.parseStringValue(PropertyPlaceholderHelper.java:178)\r\n\tat org.springframework.util.PropertyPlaceholderHelper.replacePlaceholders(PropertyPlaceholderHelper.java:124)\r\n\tat org.springframework.core.env.AbstractPropertyResolver.doResolvePlaceholders(AbstractPropertyResolver.java:239)\r\n\tat org.springframework.core.env.AbstractPropertyResolver.resolveRequiredPlaceholders(AbstractPropertyResolver.java:210)\r\n\tat org.springframework.core.env.AbstractPropertyResolver.resolveNestedPlaceholders(AbstractPropertyResolver.java:230)\r\n\tat org.springframework.core.env.PropertySourcesPropertyResolver.getProperty(PropertySourcesPropertyResolver.java:88)\r\n\tat org.springframework.core.env.PropertySourcesPropertyResolver.getProperty(PropertySourcesPropertyResolver.java:62)\r\n\tat org.springframework.core.env.AbstractEnvironment.getProperty(AbstractEnvironment.java:535)\r\n\tat org.springframework.boot.autoconfigure.condition.OnPropertyCondition$Spec.collectProperties(OnPropertyCondition.java:140)\r\n\tat org.springframework.boot.autoconfigure.condition.OnPropertyCondition$Spec.access$000(OnPropertyCondition.java:105)\r\n\tat org.springframework.boot.autoconfigure.condition.OnPropertyCondition.determineOutcome(OnPropertyCondition.java:91)\r\n\tat org.springframework.boot.autoconfigure.condition.OnPropertyCondition.getMatchOutcome(OnPropertyCondition.java:55)\r\n\tat org.springframework.boot.autoconfigure.condition.SpringBootCondition.matches(SpringBootCondition.java:47)\r\n\t... 21 common frames omitted\r\nWrapped by: java.lang.IllegalStateException: Error processing 
+condition on br.com.santander.bhs.component.altair.config.IntegrationServerAltairServiceConfig\r\n\tat org.springframework.boot.autoconfigure.condition.SpringBootCondition.matches(SpringBootCondition.java:60)\r\n\tat org.springframework.context.annotation.ConditionEvaluator.shouldSkip(ConditionEvaluator.java:108)\r\n\tat org.springframework.context...\r\n"}
