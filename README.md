@@ -1,24 +1,20 @@
-import br.com.santander.bhs.vjcaml.clientintegration.router.util.CommonUtils;
-import br.com.santander.services.bsb.santanderfinanciamentos.propostacreditosantanderfinanciamentos.v1.ParamsRemoverGarantiaB3;
-import org.apache.camel.Exchange;
-import org.apache.camel.Predicate;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.util.Optional;
-
-public class CheckManufacturerCodePredicate implements Predicate {
-    private Logger logger = LogManager.getLogger(CheckManufacturerCodePredicate.class);
-
-    @Override
-    public boolean matches(Exchange exchange) {
-        ParamsRemoverGarantiaB3 paramsRemoverGarantiaB3 = Optional.ofNullable(exchange.getIn().getBody(ParamsRemoverGarantiaB3.class))
-                .orElse(new ParamsRemoverGarantiaB3());
-
-        String uuid = (String) exchange.getProperty(CommonUtils.TRACE_ID);
-        exchange.setProperty(CommonUtils.PAYLOAD_ENTRADA, paramsRemoverGarantiaB3);
-        logger.info("Trace ID: {}, Payload: {}", uuid, paramsRemoverGarantiaB3);
-
-        return !paramsRemoverGarantiaB3.getCodigoMontadora().equals("15");
-    }
-}
+ requestTransacao.setCDCOT01(params.getPremios().getPremio().get(1).getCodigoCotacao());
+	  requestTransacao.setVLPRE01(new BigDecimal(params.getPremios().getPremio().get(1).getValor()));
+	  requestTransacao.setCDCOT02(params.getPremios().getPremio().get(2).getCodigoCotacao());
+	  requestTransacao.setVLPRE02(new BigDecimal(params.getPremios().getPremio().get(2).getValor()));
+	  requestTransacao.setCDCOT03(params.getPremios().getPremio().get(3).getCodigoCotacao());
+	  requestTransacao.setVLPRE03(new BigDecimal(params.getPremios().getPremio().get(3).getValor()));
+	  requestTransacao.setCDCOT04(params.getPremios().getPremio().get(4).getCodigoCotacao());
+	  requestTransacao.setVLPRE04(new BigDecimal(params.getPremios().getPremio().get(4).getValor()));
+	  requestTransacao.setCDCOT05(params.getPremios().getPremio().get(5).getCodigoCotacao());
+	  requestTransacao.setVLPRE05(new BigDecimal(params.getPremios().getPremio().get(5).getValor()));
+	  requestTransacao.setCDCOT06(params.getPremios().getPremio().get(6).getCodigoCotacao());
+	  requestTransacao.setVLPRE06(new BigDecimal(params.getPremios().getPremio().get(6).getValor()));
+	  requestTransacao.setCDCOT07(params.getPremios().getPremio().get(7).getCodigoCotacao());
+	  requestTransacao.setVLPRE07(new BigDecimal(params.getPremios().getPremio().get(7).getValor()));
+	  requestTransacao.setCDCOT08(params.getPremios().getPremio().get(8).getCodigoCotacao());
+	  requestTransacao.setVLPRE08(new BigDecimal(params.getPremios().getPremio().get(8).getValor()));
+	  requestTransacao.setCDCOT09(params.getPremios().getPremio().get(9).getCodigoCotacao());
+	  requestTransacao.setVLPRE09(new BigDecimal(params.getPremios().getPremio().get(9).getValor()));
+	  requestTransacao.setCDCOT10(params.getPremios().getPremio().get(10).getCodigoCotacao());
+	  requestTransacao.setVLPRE10(new BigDecimal(params.getPremios().getPremio().get(10).getValor()));
