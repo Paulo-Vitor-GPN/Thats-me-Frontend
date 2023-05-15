@@ -1,13 +1,14 @@
-List<PremioPremiosSimularParcelasType> premios = params.getPremios().getPremio();
+listFillment(params.getPremios().getPremio(), requestTransacao);
 
-if (premios.size() >= 1) {
-    requestTransacao.setCDCOT(StringUtils.leftPad("01", 2, "0"), premios.get(1).getCodigoCotacao());
-    requestTransacao.setVLPRE(StringUtils.leftPad("01", 2, "0"), new BigDecimal(premios.get(1).getValor()));
+// ...
+
+static public void listFillment(List<Premio> premios, RequestTransacao requestTransacao) {
+    for (int i = 1; i <= 10; i++) {
+        String cdcot = "CDCOT" + String.format("%02d", i);
+        String vlpre = "VLPRE" + String.format("%02d", i);
+
+        Premio premio = premios.get(i);
+        requestTransacao.setField(cdcot, premio.getCodigoCotacao());
+        requestTransacao.setField(vlpre, new BigDecimal(premio.getValor()));
+    }
 }
-
-if (premios.size() >= 2) {
-    requestTransacao.setCDCOT(StringUtils.leftPad("02", 2, "0"), premios.get(2).getCodigoCotacao());
-    requestTransacao.setVLPRE(StringUtils.leftPad("02", 2, "0"), new BigDecimal(premios.get(2).getValor()));
-}
-
-// Continue definindo as propriedades para os demais elementos da lista conforme necessário
