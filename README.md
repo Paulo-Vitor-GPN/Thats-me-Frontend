@@ -1,13 +1,4 @@
-if (!CollectionUtils.isEmpty(dtoResponse.getObjeto().getListaErros())) {
-				PsError psErro = dtoResponse.getObjeto().getListaErros().get(0);
-				ErroAltair erroAltair = AltairFormatToMessageConverter.convert(dtoResponse);
-				exchange.getIn().setHeader(Exchange.HTTP_RESPONSE_CODE, HttpStatus.BAD_REQUEST.value());
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-				logger.info("RESPONSE: " + CommonUtils.ERROR_VJ740 + " - " + psErro.getMensagem());
-				MensagemAltair mensagemAltair = new MensagemAltair();
-				mensagemAltair.setErroAltair(erroAltair);
-				responseDTO.setMensagemAltair(mensagemAltair);
-				exchange.getMessage().setBody(responseDTO);
-				return exchange;
-
-			}
+private Logger logger = LogManager.getLogger("CONSOLE_JSON_APPENDER");
