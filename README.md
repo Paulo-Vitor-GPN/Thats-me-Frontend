@@ -1,17 +1,23 @@
-mvn archetype:generate -DgroupId=com.example -DartifactId=my-app -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
+import br.com.santander.bhs.vjcaml.clientintegration.router.util.CommonUtils;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-[INFO] Scanning for projects...
-[INFO] ------------------------------------------------------------------------
-[INFO] BUILD FAILURE
-[INFO] ------------------------------------------------------------------------
-[INFO] Total time:  0.129 s
-[INFO] Finished at: 2023-05-18T02:02:15-03:00
-[INFO] ------------------------------------------------------------------------
-[ERROR] The goal you specified requires a project to execute but there is no POM in this directory (C:\Users\t769118\Documents\conf). Please verify you invoked Maven from the correct directory. -> [Help 1]
-[ERROR]
-[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
-[ERROR] Re-run Maven using the -X switch to enable full debug logging.
-[ERROR]
-[ERROR] For more information about the errors and possible solutions, please read the following articles:
-[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MissingProjectException
+public class LoggerProcessor implements Processor{
+
+    private Logger logger = LogManager.getLogger("CONSOLE_JSON_APPENDER");
+    private String etapa;
+
+    public LoggerProcessor(String etapa) {
+        this.etapa = etapa;
+    }
+
+    @Override
+    public void process(Exchange exchange) throws Exception {
+        String uuid = (String) exchange.getProperty(CommonUtils.TRACE_ID);
+
+        logger.info("Trace ID: {}, Etapa: {}", uuid, etapa);
+    }
+}
