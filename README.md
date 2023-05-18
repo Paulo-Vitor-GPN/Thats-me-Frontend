@@ -1,62 +1,43 @@
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.spring.boot.CamelSpringBootApplicationController;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.stereotype.Component;
-import java.util.Iterator;
 
-@SpringBootApplication
-public class Application {
-    public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
+public class JsonValidator {
+    private ObjectMapper objectMapper;
+
+    public JsonValidator() {
+        objectMapper = new ObjectMapper();
     }
-}
 
-@Component
-class MyRoute extends RouteBuilder {
-    @Override
-    public void configure() throws Exception {
-        from("direct:validateJson")
-            .process(new JsonValidatorProcessor())
-            .to("direct:nextRoute");
-        
-        from("direct:nextRoute")
-            .log("JSON is valid")
-            .end();
-    }
-}
-
-class JsonValidatorProcessor implements Processor {
-    @Override
-    public void process(Exchange exchange) throws Exception {
-        String jsonString = exchange.getIn().getBody(String.class);
-        
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode jsonNode = objectMapper.readTree(jsonString);
-        
-        if (hasNullOrBlankField(jsonNode)) {
-            throw new IllegalArgumentException("O JSON contém pelo menos um campo nulo ou vazio");
+    public boolean hasNullOrBlankFields(String jsonString) {
+        try {
+            JsonNode jsonNode = objectMapper.readTree(jsonString);
+            return hasNullOrBlankFields(jsonNode);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
-        
-        // O JSON não possui campos nulos ou vazios, faça o processamento necessário
     }
-    
-    private boolean hasNullOrBlankField(JsonNode jsonNode) {
-        Iterator<String> fieldNames = jsonNode.fieldNames();
-        
-        while (fieldNames.hasNext()) {
-            String fieldName = fieldNames.next();
-            JsonNode fieldValue = jsonNode.get(fieldName);
-            
-            if (fieldValue == null || fieldValue.isNull() || fieldValue.isTextual() && fieldValue.asText().isEmpty()) {
-                return true;
+
+    private boolean hasNullOrBlankFields(JsonNode jsonNode) {
+        if (jsonNode.isObject()) {
+            Iterator<Map.Entry<String, JsonNode>> fields = jsonNode.fields();
+            while (fields.hasNext()) {
+                Map.Entry<String, JsonNode> field = fields.next();
+                JsonNode fieldValue = field.getValue();
+                if (fieldValue == null || fieldValue.isNull() || fieldValue.isTextual() && fieldValue.asText().isEmpty()) {
+                    return true;
+                }
+                if (fieldValue.isContainerNode() && hasNullOrBlankFields(fieldValue)) {
+                    return true;
+                }
+            }
+        } else if (jsonNode.isArray()) {
+            for (JsonNode arrayElement : jsonNode) {
+                if (arrayElement.isObject() && hasNullOrBlankFields(arrayElement)) {
+                    return true;
+                }
             }
         }
-        
         return false;
     }
 }
