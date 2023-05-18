@@ -8,17 +8,17 @@
                 <quantidade xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true" />
             </parcelas>
             <calculo>
-                <quantidade xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true" />
-                <fator xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true" />
+                <quantidade>10</quantidade>
+                <fator>1.5</fator>
             </calculo>
-            <valorFinanciado xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true" />
+            <valorFinanciado>5000</valorFinanciado>
             <tabelaFinanciamento>
-                <pacote xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true" />
+                <pacote>XYZ</pacote>
             </tabelaFinanciamento>
             <premios>
                 <premio>
-                    <codigoCotacao xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true" />
-                    <valor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true" />
+                    <codigoCotacao>ABC123</codigoCotacao>
+                    <valor>null</valor>
                 </premio>
             </premios>
         </v12:simularParcelas>
