@@ -1,6 +1,9 @@
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.util.Iterator;
+import java.util.Map;
+
 public class JsonValidator {
     private ObjectMapper objectMapper;
 
@@ -8,36 +11,39 @@ public class JsonValidator {
         objectMapper = new ObjectMapper();
     }
 
-    public boolean hasNullOrBlankFields(String jsonString) {
+    public boolean areAllFieldsEmpty(String jsonString) {
         try {
             JsonNode jsonNode = objectMapper.readTree(jsonString);
-            return hasNullOrBlankFields(jsonNode);
+            return areAllFieldsEmpty(jsonNode);
         } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
     }
 
-    private boolean hasNullOrBlankFields(JsonNode jsonNode) {
+    private boolean areAllFieldsEmpty(JsonNode jsonNode) {
         if (jsonNode.isObject()) {
             Iterator<Map.Entry<String, JsonNode>> fields = jsonNode.fields();
             while (fields.hasNext()) {
                 Map.Entry<String, JsonNode> field = fields.next();
                 JsonNode fieldValue = field.getValue();
-                if (fieldValue == null || fieldValue.isNull() || fieldValue.isTextual() && fieldValue.asText().isEmpty()) {
-                    return true;
+                if (!fieldValue.isNull() && !fieldValue.isTextual()) {
+                    return false;
                 }
-                if (fieldValue.isContainerNode() && hasNullOrBlankFields(fieldValue)) {
-                    return true;
+                if (fieldValue.isTextual() && !fieldValue.asText().isEmpty()) {
+                    return false;
+                }
+                if (fieldValue.isContainerNode() && !areAllFieldsEmpty(fieldValue)) {
+                    return false;
                 }
             }
         } else if (jsonNode.isArray()) {
             for (JsonNode arrayElement : jsonNode) {
-                if (arrayElement.isObject() && hasNullOrBlankFields(arrayElement)) {
-                    return true;
+                if (arrayElement.isObject() && !areAllFieldsEmpty(arrayElement)) {
+                    return false;
                 }
             }
         }
-        return false;
+        return true;
     }
 }
