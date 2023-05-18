@@ -1,4 +1,39 @@
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-private Logger logger = LogManager.getLogger("CONSOLE_JSON_APPENDER");
+<soapenv:Envelope
+	xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+	xmlns:v1="http://model.santander.com.br/bsb/criptografia/v1"
+	xmlns:v11="http://model.santander.com.br/bsb/mensagem/v1"
+	xmlns:v12="http://services.santander.com.br/bsb/santanderfinanciamentos/propostacreditosantanderfinanciamentos/v1">
+	<soapenv:Body>
+		<v12:simularParcelas>
+			<!--Optional:-->
+			<parcelas>
+				<!--Optional:-->
+				<quantidade>null</quantidade>
+			</parcelas>
+			<!--Optional:-->
+			<calculo>
+				<!--Optional:-->
+				<quantidade>null</quantidade>
+				<!--Optional:-->
+				<fator>null</fator>
+			</calculo>
+			<!--Optional:-->
+			<valorFinanciado>null</valorFinanciado>
+			<!--Optional:-->
+			<tabelaFinanciamento>
+				<!--Optional:-->
+				<pacote>null</pacote>
+			</tabelaFinanciamento>
+			<!--Optional:-->
+			<premios>
+				<!--0 to 10 repetitions:-->
+				<premio>
+					<!--Optional:-->
+					<codigoCotacao>null</codigoCotacao>
+					<!--Optional:-->
+					<valor>null</valor>
+				</premio>
+			</premios>
+		</v12:simularParcelas>
+	</soapenv:Body>
+</soapenv:Envelope>
