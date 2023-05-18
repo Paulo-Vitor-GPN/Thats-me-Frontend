@@ -1,23 +1,13 @@
-import br.com.santander.bhs.vjcaml.clientintegration.router.util.CommonUtils;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
+if (!CollectionUtils.isEmpty(dtoResponse.getObjeto().getListaErros())) {
+				PsError psErro = dtoResponse.getObjeto().getListaErros().get(0);
+				ErroAltair erroAltair = AltairFormatToMessageConverter.convert(dtoResponse);
+				exchange.getIn().setHeader(Exchange.HTTP_RESPONSE_CODE, HttpStatus.BAD_REQUEST.value());
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+				logger.info("RESPONSE: " + CommonUtils.ERROR_VJ740 + " - " + psErro.getMensagem());
+				MensagemAltair mensagemAltair = new MensagemAltair();
+				mensagemAltair.setErroAltair(erroAltair);
+				responseDTO.setMensagemAltair(mensagemAltair);
+				exchange.getMessage().setBody(responseDTO);
+				return exchange;
 
-public class LoggerProcessor implements Processor{
-
-    private Logger logger = LogManager.getLogger("CONSOLE_JSON_APPENDER");
-    private String etapa;
-
-    public LoggerProcessor(String etapa) {
-        this.etapa = etapa;
-    }
-
-    @Override
-    public void process(Exchange exchange) throws Exception {
-        String uuid = (String) exchange.getProperty(CommonUtils.TRACE_ID);
-
-        logger.info("Trace ID: {}, Etapa: {}", uuid, etapa);
-    }
-}
+			}
