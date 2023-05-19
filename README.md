@@ -1,50 +1,72 @@
-import java.io.FileInputStream;
-import java.io.InputStream;
+import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.support.jsse.KeyStoreParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.TrustManagersParameters;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.KeyStore;
 
-import javax.net.ssl.SSLContext;
+public class ApiAuthenticationExample {
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.protocol.HttpClientContext;
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.ssl.SSLContexts;
-import org.apache.http.ssl.SSLContextBuilder;
-
-public class HttpClientExample {
-    
     public static void main(String[] args) throws Exception {
-        // Chame o método abaixo com as informações adequadas
-        makeRequestWithCertificateAndKey("https://api.example.com/endpoint", "path/to/certificate.cer", "path/to/privatekey.key");
-    }
-    
-    public static void makeRequestWithCertificateAndKey(String url, String certificatePath, String privateKeyPath) throws Exception {
+        // Crie um contexto Camel
+        CamelContext camelContext = new DefaultCamelContext();
+
+        // Defina as configurações do certificado
+        SSLContextParameters sslContextParameters = new SSLContextParameters();
+        KeyStoreParameters keyStoreParameters = new KeyStoreParameters();
+        TrustManagersParameters trustManagersParameters = new TrustManagersParameters();
+
+        // Caminho para o arquivo .cer
+        String certificatePath = "/caminho/para/certificado.cer";
+        // Caminho para o arquivo .key
+        String keyPath = "/caminho/para/chave.key";
+
+        // Carregue o arquivo de certificado
         KeyStore keyStore = KeyStore.getInstance("PKCS12");
-        InputStream keyStoreInputStream = new FileInputStream(certificatePath);
-        keyStore.load(keyStoreInputStream, "password".toCharArray());
-        
-        SSLContext sslContext = SSLContextBuilder.create()
-                .loadKeyMaterial(keyStore, "password".toCharArray())
-                .loadTrustMaterial(new TrustSelfSignedStrategy())
-                .build();
-        
-        SSLConnectionSocketFactory socketFactory = new SSLConnectionSocketFactory(
-                sslContext, new String[] { "TLSv1.2" }, null, NoopHostnameVerifier.INSTANCE);
-        
-        try (CloseableHttpClient httpClient = HttpClients.custom().setSSLSocketFactory(socketFactory).build()) {
-            HttpClientContext context = HttpClientContext.create();
-            
-            HttpGet httpGet = new HttpGet(url);
-            try (CloseableHttpResponse response = httpClient.execute(httpGet, context)) {
-                HttpEntity entity = response.getEntity();
-                // Processar a resposta conforme necessário
+        keyStore.load(null, null);
+        Path certificateFile = Paths.get(certificatePath);
+        keyStore.load(Files.newInputStream(certificateFile), null);
+        keyStoreParameters.setResource(certificatePath);
+        keyStoreParameters.setPassword(""); // Senha do certificado, se aplicável
+
+        // Carregue o arquivo de chave privada
+        Path keyFile = Paths.get(keyPath);
+        sslContextParameters.setKeyManagers(keyStore, null, null);
+        sslContextParameters.setKeyStoreParameters(keyStoreParameters);
+        sslContextParameters.setUseInsecureTrustManager(true); // Permitir confiar em certificados não confiáveis
+
+        // Defina a rota Camel para fazer a chamada
+        camelContext.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start")
+                        .to("https://" + HOST + "?sslContextParameters=#sslContextParameters")
+                        .process(exchange -> {
+                            // Obtenha a resposta da chamada
+                            String responseBody = exchange.getMessage().getBody(String.class);
+                            // Faça algo com a resposta
+                            System.out.println("Response Body: " + responseBody);
+                        });
             }
-        }
+        });
+
+        // Inicie o contexto Camel
+        camelContext.start();
+
+        // Execute a chamada
+        camelContext.createProducerTemplate().sendBody("direct:start", "");
+
+        // Aguarde um tempo para a resposta ser processada
+        Thread.sleep(2000);
+
+        // Pare o contexto Camel
+        camelContext.stop();
     }
 }
