@@ -1,49 +1,7 @@
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+Baixar Marcação
+API PUT /api/v1.0/contratos/{numeroContrato}/baixa Header: Content-type: application/json Authorization: Bearer {TOKEN} Body: { “chassiLista”: array<string> } Responses: 200: <sem corpo> 40x (casos de erro): { “codigo”: string, “mensagem”: string } 422 (casos de erro): [ { “chassi”: string, “erro”: { “codigo”: string, “mensagem”: string } }, … ]
 
-import java.util.Iterator;
-import java.util.Map;
-
-public class JsonValidator {
-    private ObjectMapper objectMapper;
-
-    public JsonValidator() {
-        objectMapper = new ObjectMapper();
-    }
-
-    public boolean areAllFieldsEmpty(String jsonString) {
-        try {
-            JsonNode jsonNode = objectMapper.readTree(jsonString);
-            return areAllFieldsEmpty(jsonNode);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    private boolean areAllFieldsEmpty(JsonNode jsonNode) {
-        if (jsonNode.isObject()) {
-            Iterator<Map.Entry<String, JsonNode>> fields = jsonNode.fields();
-            while (fields.hasNext()) {
-                Map.Entry<String, JsonNode> field = fields.next();
-                JsonNode fieldValue = field.getValue();
-                if (!fieldValue.isNull() && !fieldValue.isTextual()) {
-                    return false;
-                }
-                if (fieldValue.isTextual() && !fieldValue.asText().isEmpty()) {
-                    return false;
-                }
-                if (fieldValue.isContainerNode() && !areAllFieldsEmpty(fieldValue)) {
-                    return false;
-                }
-            }
-        } else if (jsonNode.isArray()) {
-            for (JsonNode arrayElement : jsonNode) {
-                if (arrayElement.isObject() && !areAllFieldsEmpty(arrayElement)) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-}
+Baixar Marcação – Exemplo
+Produção PUT https://api-veiculos-std.b3.com.br/FLPLB/api/v1.0/contratos/ CACTUS6074/baixa Produção PUT https://api-veiculos.b3.com.br/FLPLB/api/v1.0/contratos/ CACTUS6074/baixa Homologação PUT https://api-veiculos-cert-std.b3.com.br/FLPLB/api/v1.0/contratos/ CACTUS6074/baixa Homologação PUT https://api-veiculos-cert.b3.com.br/FLPLB/api/v1.0/contratos/ CACTUS6074/baixa Authorization: Bearer {access_token} Content-type: application/json Request Body: { "chassiLista": [ "8AFFZZFHA9J270847", "KMHDC51EACU386440", "9BWAB05U8AP045941" ] } Response Body (Exemplo Sucesso): N/A Response Body (Exemplo Erro 40X, ou 500): { "codigo": “404.1”, “mensagem”: “Contrato não encontrado”
+} Response Body (Exemplo Erro 422): [ { “chassi”: “8AFFZZFHA9J270847”, “erro”: { “codigo“: “422.27”, “mensagem”: “Chassi não pertencente ao contrato” } }, { “chassi”: “9BWAB05U8AP045941”, “erro”: { “codigo“: “422.6”, “mensagem”: “Chassi inválido” } }
+]
