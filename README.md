@@ -1,135 +1,31 @@
-import org.apache.camel.builder.RouteBuilder;
-
-import org.springframework.beans.factory.annotation.Value;
-
-import org.springframework.boot.SpringApplication;
-
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-import org.springframework.context.annotation.Bean;
-
-@SpringBootApplication
-
-public class Application {
-
-    
-
-    @Value("${api.host}")
-
-    private String apiHost;
-
-    
-
-    @Value("${api.cert.path}")
-
-    private String certPath;
-
-    
-
-    @Value("${api.key.path}")
-
-    private String keyPath;
-
-    public static void main(String[] args) {
-
-        SpringApplication.run(Application.class, args);
-
-    }
-
-    
-
-    @Bean
-
-    public RouteBuilder myRouteBuilder() {
-
-        return new RouteBuilder() {
-
-            @Override
-
-            public void configure() throws Exception {
-
-                from("direct:apiAuth")
-
-                    .setHeader("Content-Type", constant("application/x-www-form-urlencoded"))
-
-                    .setHeader("Chave", constant("X"))
-
-                    .setHeader("Host", constant(apiHost))
-
-                    .setHeader("Authorization", constant("Basic " + Base64.encodeBase64String("X:X".getBytes())))
-
-                    .to("https4://" + apiHost + "/oauth/token?sslContextParameters=#sslContextParameters")
-
-                    .log("${body}");
-
-            }
-
-        };
-
-    }
-
-    
-
-    @Bean
-
-    public SSLContextParameters sslContextParameters() throws Exception {
-
-        KeyStoreParameters keyStoreParameters = new KeyStoreParameters();
-
-        keyStoreParameters.setResource(certPath);
-
-        keyStoreParameters.setPassword("changeit");
-
-        KeyManagersParameters keyManagersParameters = new KeyManagersParameters();
-
-        keyManagersParameters.setKeyStore(keyStoreParameters);
-
-        keyManagersParameters.setKeyPassword("changeit");
-
-        SSLContextParameters sslContextParameters = new SSLContextParameters();
-
-        sslContextParameters.setKeyManagers(keyManagersParameters);
-
-        return sslContextParameters;
-
-    }
-
-}
-
-
-
-<dependencies dependencies >
-    <!-- ... outras dependências do Spring Boot ... -->
-    
-    <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-spring-boot-starter</artifactId>
-        <version>3.15.0</version>
-    </dependency>
-    
-    <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-http4</artifactId>
-        <version>3.15.0</version>
-    </dependency>
-    
-    <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-jackson</artifactId>
-        <version>3.15.0</version>
-    </dependency>
-</dependencies>
-
-
-
-import org.apache.camel.CamelContext;
-
-import org.apache.camel.ProducerTemplate;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
-import org.springframework.web.bind.annotation.GetMapping;
-
-import
-
-
+Suppressed: javax.net.ssl.SSLHandshakeException: Received fatal alert: handshake_failure
+		at java.base/sun.security.ssl.Alert.createSSLException(Alert.java:131)
+		at java.base/sun.security.ssl.Alert.createSSLException(Alert.java:117)
+		at java.base/sun.security.ssl.TransportContext.fatal(TransportContext.java:363)
+		at java.base/sun.security.ssl.Alert$AlertConsumer.consume(Alert.java:293)
+		at java.base/sun.security.ssl.TransportContext.dispatch(TransportContext.java:202)
+		at java.base/sun.security.ssl.SSLTransport.decode(SSLTransport.java:172)
+		at java.base/sun.security.ssl.SSLSocketImpl.decode(SSLSocketImpl.java:1383)
+		at java.base/sun.security.ssl.SSLSocketImpl.readHandshakeRecord(SSLSocketImpl.java:1296)
+		at java.base/sun.security.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:416)
+		at java.base/sun.security.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:388)
+		at org.apache.http.conn.ssl.SSLConnectionSocketFactory.createLayeredSocket(SSLConnectionSocketFactory.java:436)
+		at org.apache.http.conn.ssl.SSLConnectionSocketFactory.connectSocket(SSLConnectionSocketFactory.java:384)
+		at org.apache.http.impl.conn.DefaultHttpClientConnectionOperator.connect(DefaultHttpClientConnectionOperator.java:142)
+		at org.apache.http.impl.conn.PoolingHttpClientConnectionManager.connect(PoolingHttpClientConnectionManager.java:376)
+		at org.apache.http.impl.execchain.MainClientExec.establishRoute(MainClientExec.java:393)
+		at org.apache.http.impl.execchain.MainClientExec.execute(MainClientExec.java:236)
+		at org.apache.http.impl.execchain.ProtocolExec.execute(ProtocolExec.java:186)
+		at org.apache.http.impl.execchain.RetryExec.execute(RetryExec.java:89)
+		at org.apache.http.impl.execchain.RedirectExec.execute(RedirectExec.java:110)
+		at org.apache.http.impl.client.InternalHttpClient.doExecute(InternalHttpClient.java:185)
+		at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:83)
+		at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:56)
+		at org.apache.camel.component.http.HttpProducer.executeMethod(HttpProducer.java:346)
+		at org.apache.camel.component.http.HttpProducer.process(HttpProducer.java:201)
+		at org.apache.camel.support.AsyncProcessorConverterHelper$ProcessorToAsyncProcessorBridge.process(AsyncProcessorConverterHelper.java:66)
+		at org.apache.camel.processor.SendProcessor.process(SendProcessor.java:169)
+		at org.apache.camel.impl.engine.CamelInternalProcessor.process(CamelInternalProcessor.java:312)
+		at org.apache.camel.processor.Pipeline$PipelineTask.run(Pipeline.java:90)
+		at org.apache.camel.impl.engine.DefaultReactiveExecutor$Worker.schedule(DefaultReactiveExecutor.java:148)
+		at org.apache.camel.impl.engine.DefaultReactiveExecutor.scheduleMain(DefaultReactiveExecutor.java:60)
