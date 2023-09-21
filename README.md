@@ -1,2 +1,1 @@
-Experienced Java developer with expertise in frameworks like Apache Camel and SpringBoot. Specialized in synchronous and asynchronous microservices, API Gateway, and cloud computing (Azure). Proficient in DEVOPs tools (Git, Maven, Jenkins, Openshift), agile methodologies, and architectural solutions. Skilled in effort estimation, project meetings, and application monitoring (Dynatrace)
-
+Experienced Java developer with expertise in Apache Camel, SpringBoot, microservices (sync/async), API Gateway, Azure, DEVOPs (Git, Maven, Jenkins, Openshift), agile methods, architecture, estimates, project meetings, and Dynatrace monitoring.
