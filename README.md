@@ -1,14 +1,2 @@
-Presentation of the functions performed (Resume)
+Experienced Java developer with expertise in frameworks like Apache Camel and SpringBoot. Specialized in synchronous and asynchronous microservices, API Gateway, and cloud computing (Azure). Proficient in DEVOPs tools (Git, Maven, Jenkins, Openshift), agile methodologies, and architectural solutions. Skilled in effort estimation, project meetings, and application monitoring (Dynatrace)
 
-My main skills and technical knowledge are:
-
-Development in Java with the main frameworks on the market such as: Apache Camel, SpringBoot;
-Construction of synchronous and asynchronous microservices: RESTful API, OpenAPI/Swagger;
-API Gateway: ZUP API Manager, ApiGee
-Cloud Computing: Microsoft Azure;
-Configuration Management and DEVOPs Tools: Git, Maven, Jenkins, Openshift
-Agile Methodologies
-Definition of technical solutions and preparation of architectural blueprints – for demands involving existing or new systems;
-Conducting meetings with project support areas – such as: Architecture, Change Management, Devops, among others;
-Preparation of effort estimates and schedules;
-Experience with application monitoring and troubleshooting tools: Dynatrace.
