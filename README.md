@@ -1,56 +1,14 @@
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.conn.ssl.SSLContexts;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
-import org.springframework.stereotype.Component;
+Presentation of the functions performed (Resume)
 
-import javax.net.ssl.SSLContext;
-import java.io.FileInputStream;
-import java.security.KeyStore;
+My main skills and technical knowledge are:
 
-@Component
-public class MyProcessor implements Processor {
-
-    private static final String CERTIFICATE_PATH = "caminho/para/o/certificado.p12";
-    private static final String CERTIFICATE_PASSWORD = "senha-do-certificado";
-    private static final String HOST = "https://api.example.com";
-    private static final String REQUEST_BODY = "Corpo da requisição";
-
-    @Override
-    public void process(Exchange exchange) throws Exception {
-        // Carregar o certificado .p12
-        KeyStore keyStore = KeyStore.getInstance("PKCS12");
-        try (FileInputStream fis = new FileInputStream(CERTIFICATE_PATH)) {
-            keyStore.load(fis, CERTIFICATE_PASSWORD.toCharArray());
-        }
-
-        // Configurar o contexto SSL com o certificado
-        SSLContext sslContext = SSLContexts.custom()
-                .loadKeyMaterial(keyStore, CERTIFICATE_PASSWORD.toCharArray())
-                .build();
-
-        // Criar o cliente HTTP com o contexto SSL configurado
-        try (CloseableHttpClient httpClient = HttpClients.custom().setSSLContext(sslContext).build()) {
-            // Criar a solicitação HTTP POST
-            HttpPost httpPost = new HttpPost(HOST);
-            httpPost.setHeader("Content-Type", "application/json");
-            httpPost.setEntity(new StringEntity(REQUEST_BODY));
-
-            // Executar a solicitação
-            try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
-                // Obter a resposta
-                HttpEntity responseEntity = response.getEntity();
-                String responseBody = EntityUtils.toString(responseEntity);
-
-                // Fazer algo com a resposta, como definir o corpo da resposta no Exchange
-                exchange.getIn().setBody(responseBody);
-            }
-        }
-    }
-}
+Development in Java with the main frameworks on the market such as: Apache Camel, SpringBoot;
+Construction of synchronous and asynchronous microservices: RESTful API, OpenAPI/Swagger;
+API Gateway: ZUP API Manager, ApiGee
+Cloud Computing: Microsoft Azure;
+Configuration Management and DEVOPs Tools: Git, Maven, Jenkins, Openshift
+Agile Methodologies
+Definition of technical solutions and preparation of architectural blueprints – for demands involving existing or new systems;
+Conducting meetings with project support areas – such as: Architecture, Change Management, Devops, among others;
+Preparation of effort estimates and schedules;
+Experience with application monitoring and troubleshooting tools: Dynatrace.
