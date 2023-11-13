@@ -1,16 +1,68 @@
-{
-    "codigoGrupo": "ABC123",
-    "codigoCota": 12345,
-    "versao": 1,
-    "nomeConsorciado": "João da Silva",
-    "primeiroNome": "João",
-    "email": "joao@example.com",
-    "dddCelular": "011",
-    "numeroCelular": "987654321",
-    "cpfCnpj": "123.456.789-01",
-    "tipoPessoa": "F",
-    "penumper": "PEN123",
-    "nomeSubProduto": "Consórcio de Automóveis",
-    "valorBem": 25000.50,
-    "valorPrimeiraParcela": 1500.75
+package br.com.santander.yzcaml.clientintegration.model.dto;
+
+import br.com.santander.yzcaml.clientintegration.model.enums.ExecutionType;
+import br.com.santander.yzcaml.clientintegration.model.enums.StimulusType;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.*;
+
+import java.time.LocalDateTime;
+import java.util.Set;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@ToString
+
+public class StimulusDTO {
+
+    private String stimulusId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    public LocalDateTime createdAt;
+    private String title;
+    private ExecutionType executionType;
+    private StimulusType stimulusType;
+    private Boolean enabled;
+    private Set<StimulusScheduleDTO> schedules;
+
+}
+
+
+package br.com.santander.yzcaml.clientintegration.model.enums;
+
+public enum ExecutionType {
+    DAILY,
+    MONTHLY,
+    YEARLY,
+    EVENTUALLY
+}
+
+
+package br.com.santander.yzcaml.clientintegration.model.enums;
+
+public enum StimulusType {
+    EMAIL,
+    PUSH,
+    SMS,
+    FALLBACK,
+    WHATSAPP
+}
+
+
+package br.com.santander.yzcaml.clientintegration.model.dto;
+
+import lombok.*;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@ToString
+
+public class StimulusScheduleDTO {
+
+    private Integer hour;
+    private Integer day;
+    private Integer month;
+
 }
