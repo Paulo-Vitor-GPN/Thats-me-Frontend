@@ -1,153 +1,67 @@
-package br.com.santander.yzcaml.clientintegration.builders;
-
-import br.com.santander.yzcaml.clientintegration.builders.entities.Stimulus;
-import br.com.santander.yzcaml.clientintegration.builders.entities.Variable;
-import br.com.santander.yzcaml.clientintegration.builders.exception.StimulusBuildException;
-
-import java.util.Set;
-
-public abstract class StimulusBuilder {
-
-    private Stimulus stimulus = new Stimulus();
-
-    public StimulusBuilder stimulusId(String stimulusId) {
-        this.stimulus.setStimulusId(stimulusId);
-        return this;
-    }
-
-    public StimulusBuilder systemId(String systemId) {
-        this.stimulus.setSystemId(systemId);
-        return this;
-    }
-
-    public StimulusBuilder variables(Set<Variable> variables) {
-        this.stimulus.setVariables(variables);
-        return this;
-    }
-
-    public StimulusBuilder addVariable(String key, String value) {
-        this.stimulus.getVariables().add(new Variable(key, value));
-        return this;
-    }
-
-    public Stimulus build() {
-        if(this.stimulus.getStimulusId() == null || this.stimulus.getSystemId() == null) {
-            throw new StimulusBuildException("StimulusId and SystemId properties must not be null.");
-        }
-        return this.stimulus;
-    }
-
-    protected Boolean hasVariable(String key) {
-        return this.stimulus
-                .getVariables()
-                .contains(new Variable(key, ""));
-    }
-
+{
+    "codigoGrupo": "ABC123",
+    "codigoCota": 12345,
+    "versao": 00,
+    "nomeConsorciado": "João da Silva",
+    "primeiroNome": "João",
+    "email": "joao@example.com",
+    "dddCelular": "011",
+    "numeroCelular": "987654321",
+    "cpfCnpj": "123.456.789-01",
+    "tipoPessoa": "F",
+    "penumper": "PEN123",
+    "nomeSubProduto": "Consórcio de Automóveis",
+    "FormaAcesso": "web",
+    "valorBem": 25000.50,
+    "valorPrimeiraParcela": 1500.75
 }
 
+package br.com.santander.yzcaml.clientintegration.route.integration;
 
-package br.com.santander.yzcaml.clientintegration.builders;
+import br.com.santander.yzcaml.clientintegration.model.dto.PostAllocatedQuota;
+import br.com.santander.yzcaml.clientintegration.model.dto.PostAllocatedQuotas;
+import br.com.santander.yzcaml.clientintegration.processor.HttpResponseProcessor;
+import br.com.santander.yzcaml.clientintegration.processor.LoggerProcessor;
+import br.com.santander.yzcaml.clientintegration.processor.PostAllocationProcessor;
+import br.com.santander.yzcaml.clientintegration.util.CommonUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import org.apache.camel.Exchange;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.model.dataformat.JsonLibrary;
+import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Component;
 
-import br.com.santander.yzcaml.clientintegration.builders.entities.Stimulus;
-import br.com.santander.yzcaml.clientintegration.builders.entities.Variable;
-import br.com.santander.yzcaml.clientintegration.builders.exception.StimulusBuildException;
+import java.io.InputStream;
+import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
-import java.util.Set;
+@Component
+public class PostAllocationRoute extends RouteBuilder {
 
-public class EmailBuilder extends StimulusBuilder {
-
-    public EmailBuilder to(String to) {
-        this.addVariable("1", to);
-        return this;
-    }
-
-    public EmailBuilder from(String from) {
-        this.addVariable("2", from);
-        return this;
-    }
-
-    public EmailBuilder subject(String subject) {
-        this.addVariable("3", subject);
-        return this;
-    }
-
-    public EmailBuilder cc(String cc) {
-        this.addVariable("4", cc);
-        return this;
-    }
-
-    public EmailBuilder attachment(String attachment) {
-        this.addVariable("gnid", attachment);
-        return this;
-    }
+    @Value("${http.auth.appkey}")
+    private String appkey;
 
     @Override
-    public EmailBuilder stimulusId(String stimulusId) {
-        return (EmailBuilder) super.stimulusId(stimulusId);
+    public void configure() throws Exception {
+        from("direct:post_allocation")
+                .routeId("post_allocation_Id")
+                .doTry()
+                    .process(new PostAllocationProcessor())
+                    .setHeader(Exchange.HTTP_METHOD, constant("GET"))
+                    .setHeader(Exchange.CONTENT_TYPE, constant(MediaType.APPLICATION_JSON_VALUE))
+                    .setHeader(CommonUtils.APPLICATION_KEY, constant(appkey))
+                    .to("http://localhost:8083/mock/post-allocation" + CommonUtils.URL_PARAMETERS)
+                .unmarshal().json(JsonLibrary.Jackson, PostAllocatedQuotas.class)
+                .endDoTry()
+                .doCatch(Exception.class)
+                    .process(new HttpResponseProcessor())
+                    .process(new LoggerProcessor("Connection-oracle", "Error: post allocation"))
+                .end();
     }
-
-    @Override
-    public EmailBuilder systemId(String systemId) {
-        return (EmailBuilder) super.systemId(systemId);
-    }
-
-    @Override
-    public EmailBuilder variables(Set<Variable> variables) {
-        return (EmailBuilder) super.variables(variables);
-    }
-
-    @Override
-    public EmailBuilder addVariable(String key, String value) {
-        return (EmailBuilder) super.addVariable(key, value);
-    }
-
-    @Override
-    public Stimulus build() {
-        if(!this.hasVariable("1")){
-            throw new StimulusBuildException("'to' variable must not be null.");
-        }
-
-        return super.build();
-    }
-}
-
-
-package br.com.santander.yzcaml.clientintegration.builders;
-
-import br.com.santander.yzcaml.clientintegration.builders.exception.StimulusBuildException;
-import lombok.AllArgsConstructor;
-
-@AllArgsConstructor
-public class FallbackEmailBuilder {
-
-    private FallbackBuilder fallbackBuilderRefactored;
-
-    public FallbackEmailBuilder from(String from) {
-        fallbackBuilderRefactored.addVariable("remetenteEmail", from);
-        return this;
-    }
-
-    public FallbackEmailBuilder to(String to) {
-        fallbackBuilderRefactored.addVariable("destinatarioEmail", to);
-        return this;
-    }
-
-    public FallbackEmailBuilder subject(String subject) {
-        fallbackBuilderRefactored.addVariable("assuntoEmail", subject);
-        return this;
-    }
-
-    public FallbackEmailBuilder attachment(String attachment) {
-        fallbackBuilderRefactored.addVariable("gnid", attachment);
-        return this;
-    }
-
-    public FallbackBuilder end() {
-        if(!fallbackBuilderRefactored.hasVariable("destinatarioEmail")){
-            throw new StimulusBuildException("'to' variable must not be null.");
-        }
-
-        return this.fallbackBuilderRefactored;
-    }
-
 }
