@@ -1,65 +1,153 @@
-package br.com.santander.yzcaml.clientintegration.builders.entities;
+package br.com.santander.yzcaml.clientintegration.builders;
 
-import br.com.santander.yzcaml.clientintegration.builders.EmailBuilder;
-import br.com.santander.yzcaml.clientintegration.builders.FallbackBuilder;
-import br.com.santander.yzcaml.clientintegration.builders.PushBuilder;
-import br.com.santander.yzcaml.clientintegration.builders.SmsBuilder;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.SneakyThrows;
+import br.com.santander.yzcaml.clientintegration.builders.entities.Stimulus;
+import br.com.santander.yzcaml.clientintegration.builders.entities.Variable;
+import br.com.santander.yzcaml.clientintegration.builders.exception.StimulusBuildException;
 
-import java.util.HashSet;
 import java.util.Set;
 
-@NoArgsConstructor
-@Data
-public class Stimulus {
+public abstract class StimulusBuilder {
 
-    private String stimulusId;
-    private String systemId;
-    private Set<Variable> variables = new HashSet<>();
+    private Stimulus stimulus = new Stimulus();
 
-    public static SmsBuilder smsBuilder() {
-        return new SmsBuilder();
+    public StimulusBuilder stimulusId(String stimulusId) {
+        this.stimulus.setStimulusId(stimulusId);
+        return this;
     }
 
-    public static EmailBuilder emailBuilder() {
-        return new EmailBuilder();
+    public StimulusBuilder systemId(String systemId) {
+        this.stimulus.setSystemId(systemId);
+        return this;
     }
 
-    public static PushBuilder pushBuilder() {
-        return new PushBuilder();
+    public StimulusBuilder variables(Set<Variable> variables) {
+        this.stimulus.setVariables(variables);
+        return this;
     }
 
-    public static FallbackBuilder fallbackBuilder() {
-        return new FallbackBuilder();
+    public StimulusBuilder addVariable(String key, String value) {
+        this.stimulus.getVariables().add(new Variable(key, value));
+        return this;
     }
 
-    @SneakyThrows
-    public String toJsonString() {
-        return new ObjectMapper().writeValueAsString(this);
+    public Stimulus build() {
+        if(this.stimulus.getStimulusId() == null || this.stimulus.getSystemId() == null) {
+            throw new StimulusBuildException("StimulusId and SystemId properties must not be null.");
+        }
+        return this.stimulus;
+    }
+
+    protected Boolean hasVariable(String key) {
+        return this.stimulus
+                .getVariables()
+                .contains(new Variable(key, ""));
     }
 
 }
 
 
+package br.com.santander.yzcaml.clientintegration.builders;
+
+import br.com.santander.yzcaml.clientintegration.builders.entities.Stimulus;
+import br.com.santander.yzcaml.clientintegration.builders.entities.Variable;
+import br.com.santander.yzcaml.clientintegration.builders.exception.StimulusBuildException;
+
+import java.util.Set;
+
+public class EmailBuilder extends StimulusBuilder {
+
+    public EmailBuilder to(String to) {
+        this.addVariable("1", to);
+        return this;
+    }
+
+    public EmailBuilder from(String from) {
+        this.addVariable("2", from);
+        return this;
+    }
+
+    public EmailBuilder subject(String subject) {
+        this.addVariable("3", subject);
+        return this;
+    }
+
+    public EmailBuilder cc(String cc) {
+        this.addVariable("4", cc);
+        return this;
+    }
+
+    public EmailBuilder attachment(String attachment) {
+        this.addVariable("gnid", attachment);
+        return this;
+    }
+
+    @Override
+    public EmailBuilder stimulusId(String stimulusId) {
+        return (EmailBuilder) super.stimulusId(stimulusId);
+    }
+
+    @Override
+    public EmailBuilder systemId(String systemId) {
+        return (EmailBuilder) super.systemId(systemId);
+    }
+
+    @Override
+    public EmailBuilder variables(Set<Variable> variables) {
+        return (EmailBuilder) super.variables(variables);
+    }
+
+    @Override
+    public EmailBuilder addVariable(String key, String value) {
+        return (EmailBuilder) super.addVariable(key, value);
+    }
+
+    @Override
+    public Stimulus build() {
+        if(!this.hasVariable("1")){
+            throw new StimulusBuildException("'to' variable must not be null.");
+        }
+
+        return super.build();
+    }
+}
 
 
-package br.com.santander.yzcaml.clientintegration.builders.entities;
+package br.com.santander.yzcaml.clientintegration.builders;
 
+import br.com.santander.yzcaml.clientintegration.builders.exception.StimulusBuildException;
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 @AllArgsConstructor
-@Data
-@EqualsAndHashCode(of = "key")
-public class Variable {
+public class FallbackEmailBuilder {
 
-    private String key;
-    private String value;
+    private FallbackBuilder fallbackBuilderRefactored;
+
+    public FallbackEmailBuilder from(String from) {
+        fallbackBuilderRefactored.addVariable("remetenteEmail", from);
+        return this;
+    }
+
+    public FallbackEmailBuilder to(String to) {
+        fallbackBuilderRefactored.addVariable("destinatarioEmail", to);
+        return this;
+    }
+
+    public FallbackEmailBuilder subject(String subject) {
+        fallbackBuilderRefactored.addVariable("assuntoEmail", subject);
+        return this;
+    }
+
+    public FallbackEmailBuilder attachment(String attachment) {
+        fallbackBuilderRefactored.addVariable("gnid", attachment);
+        return this;
+    }
+
+    public FallbackBuilder end() {
+        if(!fallbackBuilderRefactored.hasVariable("destinatarioEmail")){
+            throw new StimulusBuildException("'to' variable must not be null.");
+        }
+
+        return this.fallbackBuilderRefactored;
+    }
 
 }
-
-
