@@ -37,14 +37,30 @@
       background-color: red;
       border-radius: 50%;
     }
+
+    #neighborhoods {
+      display: none;
+    }
   </style>
   <title>Roulette</title>
 </head>
 <body>
-  <div id="roulette"></div>
+  <div id="roulette" onclick="spinWheel()"></div>
+
+  <div id="neighborhoods">
+    <ul>
+      <li>Moema</li>
+      <li>Pinheiros</li>
+      <li>Vila Madalena</li>
+      <!-- Adicione mais bairros conforme necessário -->
+    </ul>
+  </div>
 
   <script>
-    // JavaScript pode ser adicionado aqui para interatividade, se necessário
+    function spinWheel() {
+      document.getElementById('neighborhoods').style.display = 'block';
+      document.getElementById('roulette').style.animation = 'none';
+    }
   </script>
 </body>
 </html>
