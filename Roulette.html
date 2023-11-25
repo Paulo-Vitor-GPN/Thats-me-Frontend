@@ -18,7 +18,7 @@
       border: 2px solid #333;
       border-radius: 50%;
       position: relative;
-      transition: transform 3s ease-out;
+      transition: transform 3s cubic-bezier(0.17, 0.67, 0.83, 0.67);
     }
 
     #neighborhoods {
@@ -64,7 +64,7 @@
       const randomIndex = Math.floor(Math.random() * neighborhoodList.length);
 
       // Calcula o ângulo de rotação para parar no bairro escolhido
-      const angle = randomIndex * (360 / neighborhoodList.length);
+      const angle = randomIndex * (360 / neighborhoodList.length) + 360 * 5; // 5 voltas completas
 
       // Aplica a transformação para girar e parar na posição desejada
       roulette.style.transform = `rotate(${angle}deg)`;
