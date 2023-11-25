@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    #roulette {
+      width: 200px;
+      height: 200px;
+      border: 2px solid #333;
+      border-radius: 50%;
+      position: relative;
+      animation: spin 5s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    #roulette::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 10px;
+      height: 10px;
+      background-color: red;
+      border-radius: 50%;
+    }
+  </style>
+  <title>Roulette</title>
+</head>
+<body>
+  <div id="roulette"></div>
+
+  <script>
+    // JavaScript pode ser adicionado aqui para interatividade, se necessário
+  </script>
+</body>
+</html>
