@@ -18,28 +18,26 @@
       border: 2px solid #333;
       border-radius: 50%;
       position: relative;
-      animation: spin 5s linear infinite;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    #roulette::before {
-      content: "";
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 10px;
-      height: 10px;
-      background-color: red;
-      border-radius: 50%;
+      transition: transform 3s ease-out;
     }
 
     #neighborhoods {
-      display: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+    }
+
+    #neighborhoods ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    #neighborhoods li {
+      font-size: 16px;
+      margin-bottom: 10px;
     }
   </style>
   <title>Roulette</title>
@@ -58,8 +56,18 @@
 
   <script>
     function spinWheel() {
-      document.getElementById('neighborhoods').style.display = 'block';
-      document.getElementById('roulette').style.animation = 'none';
+      const roulette = document.getElementById('roulette');
+      const neighborhoods = document.getElementById('neighborhoods');
+      const neighborhoodList = neighborhoods.querySelectorAll('li');
+
+      // Gera um índice aleatório para escolher um bairro
+      const randomIndex = Math.floor(Math.random() * neighborhoodList.length);
+
+      // Calcula o ângulo de rotação para parar no bairro escolhido
+      const angle = randomIndex * (360 / neighborhoodList.length);
+
+      // Aplica a transformação para girar e parar na posição desejada
+      roulette.style.transform = `rotate(${angle}deg)`;
     }
   </script>
 </body>
