@@ -1,76 +1,160 @@
 package br.com.santander.yz.config;
 
-import com.zaxxer.hikari.HikariConfig;
+import br.com.santander.yz.model.*;
+import br.com.santander.yz.model.enums.ExecutionTypeEnum;
+import br.com.santander.yz.model.enums.StimulusTypeEnum;
+import br.com.santander.yz.repository.StimulusParameterRepository;
+import br.com.santander.yz.repository.StimulusScheduleRepository;
 import com.zaxxer.hikari.HikariDataSource;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Properties;
-import javax.sql.DataSource;
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Bean;
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Random;
+import java.util.Set;
+import java.util.UUID;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
-@Getter
-@Setter
+@AllArgsConstructor
 @Configuration
-@Profile({"local", "test"})
-@ConfigurationProperties(prefix = "database.h2")
-public class DatabaseH2Config {
+@Profile("sandbox")
+@Slf4j
+public class H2MockConfig implements CommandLineRunner {
 
-  private String url;
-  private String driverClassName;
-  private String username;
-  private String password;
-  private String poolName;
-  private Integer maxPoolSize;
-  private Integer minPoolSize;
-  private Integer maxLifetime;
-  private Integer validationTimeout;
-  private Integer connectionTimeout;
-  private Integer idleTimeout;
-  private Integer leakDetectionThreshold;
+  private StimulusParameterRepository parameterRepository;
+  private StimulusScheduleRepository scheduleRepository;
 
-  /**
-   * Creates a DataSource Bean to connect to the database.
-   *
-   * @return Connection DataSource.
-   */
-  @Bean
-  public DataSource dataSource() throws IOException {
-    final Properties properties = new Properties();
-    properties.put("DATABASE", "H2");
-    properties.put("SHOULD_MOCK_DATA", true);
+  private HikariDataSource dataSource;
 
-    HikariConfig hikariConfig = new HikariConfig();
-    hikariConfig.setDriverClassName(driverClassName);
-    hikariConfig.setJdbcUrl(url);
-    hikariConfig.setUsername(extractSecretValue(username));
-    hikariConfig.setPassword(extractSecretValue(password));
-    hikariConfig.setPoolName(poolName);
-    hikariConfig.setMinimumIdle(minPoolSize);
-    hikariConfig.setMaximumPoolSize(maxPoolSize);
-    hikariConfig.setMaxLifetime(maxLifetime);
-    hikariConfig.setValidationTimeout(validationTimeout);
-    hikariConfig.setConnectionTimeout(connectionTimeout);
-    hikariConfig.setIdleTimeout(idleTimeout);
-    hikariConfig.setLeakDetectionThreshold(leakDetectionThreshold);
-    hikariConfig.setDataSourceProperties(properties);
-    return new HikariDataSource(hikariConfig);
+  @Override
+  public void run(String... args) throws Exception {
+
+    log.info("Environment sandbox ativo.");
+
+    if (!"H2".equals(dataSource.getDataSourceProperties().get("DATABASE"))
+        && Boolean.TRUE.equals(dataSource.getDataSourceProperties().get("SHOULD_MOCK_DATA"))) {
+      return;
+    }
+
+    log.info("Mockando dados em base de dados temporária.");
+
+    for (int i = 0; i < 999; i++) {
+      StimulusParameter parameter = generateStimulusParameter();
+
+      if (parameterRepository.findById(parameter.getStimulusId()).isPresent()) {
+        continue;
+      }
+
+      parameterRepository.save(parameter);
+      scheduleRepository.saveAll(parameter.getSchedules());
+    }
   }
 
-  /**
-   * Tests if the provided secret is an existing file. If it's a file, the contents are read and
-   * assumed as the password. Otherwise, we assume the password was passed in plain text.
-   *
-   * @param secret Path to a file containg the password or the password itself.
-   * @return The password to be used for connection.
-   */
-  private static String extractSecretValue(String secret) throws IOException {
-    Path secretPath = Path.of(secret);
-    return Files.readString(secretPath);
+  private StimulusParameter generateStimulusParameter() {
+    StimulusParameter parameter =
+        new StimulusParameter(
+            generateStimulusId(),
+            LocalDateTime.now(),
+            generateTitle(),
+            generateStimulusType(),
+            generateExecutionType(),
+            generateEnabled(),
+            null);
+    Set<StimulusSchedule> schedules =
+        generateSchedules(parameter.getExecutionTypeEnum(), parameter);
+    parameter.setSchedules(schedules);
+    return parameter;
+  }
+
+  private String generateStimulusId() {
+    return "YZBATCH" + new Random().nextInt(999);
+  }
+
+  private String generateTitle() {
+    return UUID.randomUUID().toString();
+  }
+
+  private ExecutionTypeEnum generateExecutionType() {
+    int r = new Random().nextInt(4);
+    switch (r) {
+      case 0:
+        return ExecutionTypeEnum.DAILY;
+      case 1:
+        return ExecutionTypeEnum.MONTHLY;
+      case 2:
+        return ExecutionTypeEnum.YEARLY;
+      case 3:
+        return ExecutionTypeEnum.EVENTUALLY;
+    }
+    return ExecutionTypeEnum.DAILY;
+  }
+
+  private StimulusTypeEnum generateStimulusType() {
+    int r = new Random().nextInt(4);
+    switch (r) {
+      case 0:
+        return StimulusTypeEnum.EMAIL;
+      case 1:
+        return StimulusTypeEnum.PUSH;
+      case 2:
+        return StimulusTypeEnum.SMS;
+      case 3:
+        return StimulusTypeEnum.FALLBACK;
+    }
+    return StimulusTypeEnum.EMAIL;
+  }
+
+  private Boolean generateEnabled() {
+    int r = new Random().nextInt(2);
+    return r == 0 ? true : false;
+  }
+
+  private Set<StimulusSchedule> generateSchedules(
+      ExecutionTypeEnum executionTypeEnum, StimulusParameter stimulusParameter) {
+    int r = new Random().nextInt(5);
+    r = r == 0 ? r++ : r;
+
+    Set<StimulusSchedule> schedules = new HashSet<>();
+
+    switch (executionTypeEnum) {
+      case DAILY:
+        for (int i = 0; i <= r; i++) {
+          schedules.add(
+              new StimulusSchedule(
+                  null, stimulusParameter, generateRandomRange(0, 23), null, null));
+        }
+        break;
+      case MONTHLY:
+        for (int i = 0; i <= r; i++) {
+          schedules.add(
+              new StimulusSchedule(
+                  null,
+                  stimulusParameter,
+                  generateRandomRange(0, 23),
+                  generateRandomRange(1, 31),
+                  null));
+        }
+        break;
+      case YEARLY:
+        for (int i = 0; i <= r; i++) {
+          schedules.add(
+              new StimulusSchedule(
+                  null,
+                  stimulusParameter,
+                  generateRandomRange(0, 23),
+                  generateRandomRange(1, 31),
+                  generateRandomRange(1, 12)));
+        }
+        break;
+      case EVENTUALLY:
+        return new HashSet<>();
+    }
+    return schedules;
+  }
+
+  private Integer generateRandomRange(Integer min, Integer max) {
+    return (int) Math.floor(Math.random() * (max - min + 1) + min);
   }
 }
