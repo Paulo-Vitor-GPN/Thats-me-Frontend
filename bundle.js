@@ -2340,7 +2340,7 @@ let restaurants = null
 let wheelName = wheelNameEl.textContent
 
 // Resturants near Main St. Santa Monica, CA, USA
-const defaultRestaurants =  [ 'Tatuapé', 'Móoca', 'Vila Prudente', 'Carrão', 'Ipiranga', 'Saúde', 'Água Rasa', 'Jabaquara', 'Butantã', 'Santo Amaro', 'Cursino', 'Limão', 'Vila Matilde', 'Jardim São Paulo', 'Pirituba', 'Vila Carrão', 'São Miguel Paulista', 'Sapopemba', 'Vila Guilherme', 'Vila Andrade', 'Vila Formosa', 'Tucuruvi', 'Freguesia do Ó', 'Campo Limpo', 'Cidade Ademar', 'Vila Jacuí', 'Vila Medeiros', 'Penha', 'Jardim Helena', 'Brás' ]
+const defaultRestaurants =  [ 'Tatuapé', 'Móoca', 'Vila Prudente', 'Carrão', 'Ipiranga', 'Saúde', 'Água Rasa', 'Jabaquara', 'Butantã', 'Santo Amaro', 'Cursino', 'Limão', 'Vila Matilde', 'Jardim São Paulo', 'Pirituba', 'Vila Carrão', 'São Miguel Paulista', 'Sapopemba', 'Vila Guilherme', 'Vila Andrade', 'Vila Formosa', 'Tucuruvi', 'Freguesia do Ó', 'Campo Limpo', 'Vila Jacuí', 'Vila Medeiros', 'Penha', 'Jardim Helena', 'Brás' ]
 
 const localStorageKeySegments = 'lunchwheel:segments'
 const localStorageKeyWheelName = 'lunchwheel:name'
