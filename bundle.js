@@ -2345,9 +2345,20 @@ const defaultRestaurants =  [ 'Tatuapé', 'Móoca', 'Vila Prudente', 'Carrão', 
 const localStorageKeySegments = 'lunchwheel:segments'
 const localStorageKeyWheelName = 'lunchwheel:name'
 
-const colors = [
-  '#86131C', '#D9AE62', '#86131C', '#D9AE62', '#86131C', '#D9AE62', '#86131C', '#D9AE62'
-]
+const colors = generateColors(defaultRestaurants.length)
+
+function generateColors(quantity) {
+    const generatedColors = [];
+  
+    for (let i = 0; i < quantity; i++) {
+      // Alternar entre as duas cores fornecidas
+      const color = i % 2 === 0 ? '#86131C' : '#D9AE62';
+  
+      generatedColors.push(color);
+    }
+  
+    return generatedColors;
+  }
 
 window.lunchWheel = {
   segments: function (list) {
