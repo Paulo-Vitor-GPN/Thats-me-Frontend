@@ -1,18 +1,53 @@
-const defaultRestaurants = ['Tatuapé', 'Móoca', 'Vila Prudente', 'Carrão', 'Ipiranga', 'Saúde', 'Água Rasa', 'Jabaquara', 'Butantã', 'Santo Amaro', 'Cursino', 'Limão', 'Vila Matilde', 'Jardim São Paulo', 'Pirituba', 'Vila Carrão', 'São Miguel Paulista', 'Sapopemba', 'Vila Guilherme', 'Vila Andrade', 'Vila Formosa', 'Tucuruvi', 'Freguesia do Ó', 'Campo Limpo', 'Cidade Ademar', 'Vila Jacuí', 'Vila Medeiros', 'Penha', 'Jardim Helena', 'Brás'];
 
-const colors = generateColors(defaultRestaurants.length);
+import lombok.*;
 
-function generateColors(quantity) {
-  const generatedColors = [];
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@ToString
 
-  for (let i = 0; i < quantity; i++) {
-    // Alternar entre as duas cores fornecidas
-    const color = i % 2 === 0 ? '#86131C' : '#D9AE62';
+public class StimulusScheduleDTO {
 
-    generatedColors.push(color);
-  }
+    private Integer hour;
+    private Integer day;
+    private Integer month;
 
-  return generatedColors;
 }
 
-console.log(colors);
+import br.com.santander.yzcaml.clientintegration.model.enums.ExecutionType;
+import br.com.santander.yzcaml.clientintegration.model.enums.StimulusType;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+import java.time.LocalDate;
+import java.util.Set;
+
+@Getter
+@Setter
+@ToString
+public class CreateStimuliDTO {
+
+    private String stimulusId;
+    @JsonDeserialize(using = LocalDateDeserializer.class)
+    @JsonSerialize(using = LocalDateSerializer.class)
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate createdAt;
+    private String title;
+    private ExecutionType executionType;
+    private StimulusType stimulusType;
+    private Boolean enabled;
+    private String msgId;
+    private Set<StimulusScheduleDTO> schedules;
+
+    public static boolean validFields(CreateStimuliDTO createStimuliDTO){
+
+        return true;
+    }
+}
