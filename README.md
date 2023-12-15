@@ -3,60 +3,66 @@ package br.com.santander.yzcaml.clientintegration.aggregation;
 import br.com.santander.yzcaml.clientintegration.model.dto.StandardErrorDTO;
 import br.com.santander.yzcaml.clientintegration.model.dto.StimulusDTO;
 import br.com.santander.yzcaml.clientintegration.util.CommonUtils;
-import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.http.HttpStatus;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 import java.time.Instant;
 
-public class ConsultStimuliParamAggregationStrategy implements AggregationStrategy {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-    private static final Logger LOGGER = LogManager.getLogger(ConsultStimuliParamAggregationStrategy.class);
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class ConsultStimuliParamAggregationStrategyTest {
 
-    @Override
-    public Exchange aggregate(Exchange exchange, Exchange resource) {
+    private ConsultStimuliParamAggregationStrategy strategy;
 
-        String uuid = (String) exchange.getProperty(CommonUtils.TRACE_ID);
-        String stimulusid = (String) exchange.getProperty(CommonUtils.STIMULUS_ID);
-        int responseCode = (int) resource.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE);
+    @BeforeAll
+    void setUp() {
+        strategy = new ConsultStimuliParamAggregationStrategy();
+    }
+
+    @Test
+    void handleNotFoundResponse() {
+        Exchange exchange = mock(Exchange.class);
+        Exchange resource = mock(Exchange.class);
+
+        when(exchange.getProperty(CommonUtils.TRACE_ID)).thenReturn("testTraceId");
+        when(exchange.getProperty(CommonUtils.STIMULUS_ID)).thenReturn("testStimulusId");
+
+        when(resource.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE)).thenReturn(404);
         StandardErrorDTO errorResponse = new StandardErrorDTO();
-        Object resourceResponse = resource.getMessage().getBody();
+        errorResponse.setMessage("Not Found");
+        when(resource.getMessage().getBody()).thenReturn(errorResponse);
 
-        LOGGER.info("Trace ID: {}, stimulu ID: {}, Stage: Consulta Arsenal [PARAMETRIZADOR], rotorno oracle: {}", uuid, stimulusid, resource.getMessage().getBody());
+        strategy.aggregate(exchange, resource);
 
-        try {
-            if (responseCode == HttpStatus.NOT_FOUND.value()) {
-                errorResponse = (StandardErrorDTO) resourceResponse;
-                errorResponse.setMessage(errorResponse.getMessage() != null ? errorResponse.getMessage() : "Houve um erro inesperado no processamento da mensagem");
-                errorResponse.setStatus(errorResponse.getStatus() != null ? errorResponse.getStatus() : "400");
-                errorResponse.setTimestamp(errorResponse.getTimestamp() != null ? errorResponse.getTimestamp() : Instant.now().toEpochMilli());
-                errorResponse.setUrl(errorResponse.getUrl() != null ? errorResponse.getUrl() : "");
-                resource.getMessage().setBody(errorResponse);
+        // Add assertions based on the expected behavior for a not found response
+        // For example:
+        assertEquals(400, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        // Add more assertions based on your specific requirements
+    }
 
-                exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, HttpStatus.BAD_REQUEST.value());
-                LOGGER.error("TRACE ID: {}, Stimulu ID: {}, Stage: Consulta Arsenal [PARAMETRIZADOR]: {} ", uuid, stimulusid, errorResponse);
-                return resource;
-            }
-            if (responseCode == HttpStatus.OK.value()) {
-                StimulusDTO responseConsultStimuli = (StimulusDTO) resourceResponse;
-                if (StimulusDTO.isValidFields(responseConsultStimuli) && responseConsultStimuli.getStimulusId().equals(exchange.getProperty(CommonUtils.STIMULUS_ID))) {
-                    exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, HttpStatus.ACCEPTED.value());
-                    resource.setProperty(CommonUtils.BODY, responseConsultStimuli);
-                    resource.getMessage().setBody(false);
-                }
-                LOGGER.info("TRACE ID: {}, Stimulu ID: {}, Stage: Consulta Arsenal [PARAMETRIZADOR]: {} ", uuid, stimulusid, responseConsultStimuli.toString());
-            }
-            return resource;
-        } catch (Exception e) {
-            errorResponse.setMessage("Houve um erro inesperado no processamento da mensagem");
-            errorResponse.setStatus("400");
-            errorResponse.setTimestamp(Instant.now().toEpochMilli());
-            errorResponse.setUrl("");
-            resource.getMessage().setBody(errorResponse);
-            LOGGER.error("TRACE ID: {}, Stimulu ID: {}, Stage: Consulta Arsenal - erro, cause by: {} ", uuid, stimulusid, e.getMessage());
-            return resource;
-        }
+    @Test
+    void handleOkResponse() {
+        Exchange exchange = mock(Exchange.class);
+        Exchange resource = mock(Exchange.class);
+
+        when(exchange.getProperty(CommonUtils.TRACE_ID)).thenReturn("testTraceId");
+        when(exchange.getProperty(CommonUtils.STIMULUS_ID)).thenReturn("testStimulusId");
+
+        when(resource.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE)).thenReturn(200);
+        StimulusDTO responseStimuli = new StimulusDTO();
+        responseStimuli.setStimulusId("testStimulusId");
+        when(resource.getMessage().getBody()).thenReturn(responseStimuli);
+
+        strategy.aggregate(exchange, resource);
+
+        // Add assertions based on the expected behavior for a successful response
+        // For example:
+        assertEquals(202, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        // Add more assertions based on your specific requirements
     }
 }
