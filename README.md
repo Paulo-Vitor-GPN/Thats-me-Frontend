@@ -1,68 +1,57 @@
-package br.com.santander.yzcaml.clientintegration.aggregation;
+[ERROR] 
 
-import br.com.santander.yzcaml.clientintegration.model.dto.StandardErrorDTO;
-import br.com.santander.yzcaml.clientintegration.model.dto.StimulusDTO;
-import br.com.santander.yzcaml.clientintegration.util.CommonUtils;
-import org.apache.camel.Exchange;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+[2024-01-03T22:47:34.626Z] java.lang.RuntimeException: Could not generate model 'Stimulus'
 
-import java.time.Instant;
+[2024-01-03T22:47:34.626Z]     at io.swagger.codegen.v3.DefaultGenerator.generateModels (DefaultGenerator.java:451)
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+[2024-01-03T22:47:34.626Z]     at io.swagger.codegen.v3.DefaultGenerator.generate (DefaultGenerator.java:779)
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class ConsultStimuliParamAggregationStrategyTest {
+[2024-01-03T22:47:34.626Z]     at io.swagger.codegen.v3.maven.plugin.CodeGenMojo.execute_ (CodeGenMojo.java:554)
 
-    private ConsultStimuliParamAggregationStrategy strategy;
+[2024-01-03T22:47:34.626Z]     at io.swagger.codegen.v3.maven.plugin.CodeGenMojo.execute (CodeGenMojo.java:319)
 
-    @BeforeAll
-    void setUp() {
-        strategy = new ConsultStimuliParamAggregationStrategy();
-    }
+[2024-01-03T22:47:34.626Z]     at org.apache.maven.plugin.DefaultBuildPluginManager.executeMojo (DefaultBuildPluginManager.java:134)
 
-    @Test
-    void handleNotFoundResponse() {
-        Exchange exchange = mock(Exchange.class);
-        Exchange resource = mock(Exchange.class);
+[2024-01-03T22:47:34.626Z]     at org.apache.maven.lifecycle.internal.MojoExecutor.execute (MojoExecutor.java:208)
 
-        when(exchange.getProperty(CommonUtils.TRACE_ID)).thenReturn("testTraceId");
-        when(exchange.getProperty(CommonUtils.STIMULUS_ID)).thenReturn("testStimulusId");
+[2024-01-03T22:47:34.626Z]     at org.apache.maven.lifecycle.internal.MojoExecutor.execute (MojoExecutor.java:154)
 
-        when(resource.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE)).thenReturn(404);
-        StandardErrorDTO errorResponse = new StandardErrorDTO();
-        errorResponse.setMessage("Not Found");
-        when(resource.getMessage().getBody()).thenReturn(errorResponse);
+[2024-01-03T22:47:34.626Z]     at org.apache.maven.lifecycle.internal.MojoExecutor.execute (MojoExecutor.java:146)
 
-        strategy.aggregate(exchange, resource);
+[2024-01-03T22:47:34.626Z]     at org.apache.maven.lifecycle.internal.LifecycleModuleBuilder.buildProject (LifecycleModuleBuilder.java:117)
 
-        // Add assertions based on the expected behavior for a not found response
-        // For example:
-        assertEquals(400, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
-        // Add more assertions based on your specific requirements
-    }
+[2024-01-03T22:47:34.626Z]     at org.apache.maven.lifecycle.internal.LifecycleModuleBuilder.buildProject (LifecycleModuleBuilder.java:81)
 
-    @Test
-    void handleOkResponse() {
-        Exchange exchange = mock(Exchange.class);
-        Exchange resource = mock(Exchange.class);
+[2024-01-03T22:47:34.626Z]     at org.apache.maven.lifecycle.internal.builder.singlethreaded.SingleThreadedBuilder.build (SingleThreadedBuilder.java:51)
 
-        when(exchange.getProperty(CommonUtils.TRACE_ID)).thenReturn("testTraceId");
-        when(exchange.getProperty(CommonUtils.STIMULUS_ID)).thenReturn("testStimulusId");
+[2024-01-03T22:47:34.626Z]     at org.apache.maven.lifecycle.internal.LifecycleStarter.execute (LifecycleStarter.java:128)
 
-        when(resource.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE)).thenReturn(200);
-        StimulusDTO responseStimuli = new StimulusDTO();
-        responseStimuli.setStimulusId("testStimulusId");
-        when(resource.getMessage().getBody()).thenReturn(responseStimuli);
+[2024-01-03T22:47:34.626Z]     at org.apache.maven.DefaultMaven.doExecute (DefaultMaven.java:309)
 
-        strategy.aggregate(exchange, resource);
+[2024-01-03T22:47:34.626Z]     at org.apache.maven.DefaultMaven.doExecute (DefaultMaven.java:194)
 
-        // Add assertions based on the expected behavior for a successful response
-        // For example:
-        assertEquals(202, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
-        // Add more assertions based on your specific requirements
-    }
-}
+[2024-01-03T22:47:34.626Z]     at org.apache.maven.DefaultMaven.execute (DefaultMaven.java:107)
+
+[2024-01-03T22:47:34.626Z]     at org.apache.maven.cli.MavenCli.execute (MavenCli.java:955)
+
+[2024-01-03T22:47:34.626Z]     at org.apache.maven.cli.MavenCli.doMain (MavenCli.java:290)
+
+[2024-01-03T22:47:34.626Z]     at org.apache.maven.cli.MavenCli.main (MavenCli.java:194)
+
+[2024-01-03T22:47:34.626Z]     at jdk.internal.reflect.NativeMethodAccessorImpl.invoke0 (Native Method)
+
+[2024-01-03T22:47:34.626Z]     at jdk.internal.reflect.NativeMethodAccessorImpl.invoke (NativeMethodAccessorImpl.java:77)
+
+[2024-01-03T22:47:34.626Z]     at jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke (DelegatingMethodAccessorImpl.java:43)
+
+[2024-01-03T22:47:34.626Z]     at java.lang.reflect.Method.invoke (Method.java:568)
+
+[2024-01-03T22:47:34.626Z]     at org.codehaus.plexus.classworlds.launcher.Launcher.launchEnhanced (Launcher.java:289)
+
+[2024-01-03T22:47:34.627Z]     at org.codehaus.plexus.classworlds.launcher.Launcher.launch (Launcher.java:229)
+
+[2024-01-03T22:47:34.627Z]     at org.codehaus.plexus.classworlds.launcher.Launcher.mainWithExitCode (Launcher.java:415)
+
+[2024-01-03T22:47:34.627Z]     at org.codehaus.plexus.classworlds.launcher.Launcher.main (Launcher.java:356)
+
+[2024-01-03T22:47:34.627Z] Caused by: com.github.jknack.handlebars.HandlebarsException: /handlebars/JavaSpring/pojo.mustache:2:6: java.lang.reflect.InaccessibleObjectException: Unable to make public boolean java.util.Collections$EmptyMap.isEmpty() accessible: module java.base does not "opens java.util" to unnamed module @3dec79f8
